@@ -8,8 +8,8 @@ interface IHookInfo {
 
     /// @dev Enum for the type of call to be made in the fallback function.
     enum CallType {
-        STATICCALL,
         CALL,
+        STATIC_CALL,
         DELEGATE_CALL
     }
 

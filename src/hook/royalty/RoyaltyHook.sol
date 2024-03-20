@@ -52,10 +52,12 @@ contract RoyaltyHook is IRoyaltyInfo, ERC1155Hook, Multicallable {
         hookInfo.hookFallbackFunctions = new HookFallbackFunction[](4);
         hookInfo.hookFallbackFunctions[0] = HookFallbackFunction({
             functionSelector: this.getRoyaltyInfoForToken.selector,
-            callType: CallType.STATICCALL
+            callType: CallType.STATIC_CALL
         });
-        hookInfo.hookFallbackFunctions[1] =
-            HookFallbackFunction({functionSelector: this.getDefaultRoyaltyInfo.selector, callType: CallType.STATICCALL});
+        hookInfo.hookFallbackFunctions[1] = HookFallbackFunction({
+            functionSelector: this.getDefaultRoyaltyInfo.selector,
+            callType: CallType.STATIC_CALL
+        });
         hookInfo.hookFallbackFunctions[2] =
             HookFallbackFunction({functionSelector: this.setDefaultRoyaltyInfo.selector, callType: CallType.CALL});
         hookInfo.hookFallbackFunctions[3] =

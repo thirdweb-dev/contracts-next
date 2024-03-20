@@ -81,9 +81,9 @@ contract AllowlistMintHookERC1155 is IFeeConfig, ERC1155Hook, Multicallable {
         hookInfo.hookFlags = BEFORE_MINT_FLAG();
         hookInfo.hookFallbackFunctions = new HookFallbackFunction[](6);
         hookInfo.hookFallbackFunctions[0] =
-            HookFallbackFunction({functionSelector: this.getFeeConfigForToken.selector, callType: CallType.STATICCALL});
+            HookFallbackFunction({functionSelector: this.getFeeConfigForToken.selector, callType: CallType.STATIC_CALL});
         hookInfo.hookFallbackFunctions[1] =
-            HookFallbackFunction({functionSelector: this.getClaimCondition.selector, callType: CallType.STATICCALL});
+            HookFallbackFunction({functionSelector: this.getClaimCondition.selector, callType: CallType.STATIC_CALL});
         hookInfo.hookFallbackFunctions[2] =
             HookFallbackFunction({functionSelector: this.setClaimCondition.selector, callType: CallType.CALL});
         hookInfo.hookFallbackFunctions[3] =
@@ -91,7 +91,7 @@ contract AllowlistMintHookERC1155 is IFeeConfig, ERC1155Hook, Multicallable {
         hookInfo.hookFallbackFunctions[4] =
             HookFallbackFunction({functionSelector: this.setFeeConfigForToken.selector, callType: CallType.CALL});
         hookInfo.hookFallbackFunctions[5] =
-            HookFallbackFunction({functionSelector: this.getDefaultFeeConfig.selector, callType: CallType.STATICCALL});
+            HookFallbackFunction({functionSelector: this.getDefaultFeeConfig.selector, callType: CallType.STATIC_CALL});
     }
 
     /// @notice Returns the fee config for a token.

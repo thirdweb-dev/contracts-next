@@ -88,15 +88,15 @@ abstract contract HookInstaller is IHookInstaller {
             revert HookInstallerFallbackFunctionDoesNotExist();
         }
 
-        if (callInfo.callType != CallType.STATICCALL && !_canWriteToHooks(msg.sender)) {
+        if (callInfo.callType != CallType.STATIC_CALL && !_canWriteToHooks(msg.sender)) {
             revert HookInstallerUnauthorizedWrite();
         }
 
         if (callInfo.callType == CallType.CALL) {
             _callAndReturn(callInfo.target, msg.value);
         } else if (callInfo.callType == CallType.DELEGATE_CALL) {
-            _delegateAndReturn(callInfo.target);
-        } else if (callInfo.callType == CallType.STATICCALL) {
+            _delegatecallAndReturn(callInfo.target);
+        } else if (callInfo.callType == CallType.STATIC_CALL) {
             _staticcallAndReturn(callInfo.target);
         }
     }
@@ -259,7 +259,7 @@ abstract contract HookInstaller is IHookInstaller {
     }
 
     /// @dev delegateCalls an `implementation` smart contract.
-    function _delegateAndReturn(address implementation) internal virtual {
+    function _delegatecallAndReturn(address implementation) internal virtual {
         assembly {
             // Copy msg.data. We take full control of memory in this inline assembly
             // block because it will not return to Solidity code. We overwrite the

@@ -56,9 +56,9 @@ contract LazyMintHook is ERC721Hook, Multicallable {
         hookInfo.hookFlags = ON_TOKEN_URI_FLAG();
         hookInfo.hookFallbackFunctions = new HookFallbackFunction[](3);
         hookInfo.hookFallbackFunctions[0] =
-            HookFallbackFunction({functionSelector: this.getBaseURICount.selector, callType: CallType.STATICCALL});
+            HookFallbackFunction({functionSelector: this.getBaseURICount.selector, callType: CallType.STATIC_CALL});
         hookInfo.hookFallbackFunctions[1] =
-            HookFallbackFunction({functionSelector: this.getBatchIdAtIndex.selector, callType: CallType.STATICCALL});
+            HookFallbackFunction({functionSelector: this.getBatchIdAtIndex.selector, callType: CallType.STATIC_CALL});
         hookInfo.hookFallbackFunctions[2] =
             HookFallbackFunction({functionSelector: this.lazyMint.selector, callType: CallType.CALL});
     }

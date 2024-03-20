@@ -101,21 +101,21 @@ contract MintHookERC20 is IFeeConfig, IMintRequest, IClaimCondition, EIP712, ERC
         hookInfo.hookFlags = BEFORE_MINT_FLAG();
         hookInfo.hookFallbackFunctions = new HookFallbackFunction[](8);
         hookInfo.hookFallbackFunctions[0] =
-            HookFallbackFunction({functionSelector: this.verifyClaim.selector, callType: CallType.STATICCALL});
+            HookFallbackFunction({functionSelector: this.verifyClaim.selector, callType: CallType.STATIC_CALL});
         hookInfo.hookFallbackFunctions[1] = HookFallbackFunction({
             functionSelector: this.verifyPermissionedClaim.selector,
-            callType: CallType.STATICCALL
+            callType: CallType.STATIC_CALL
         });
         hookInfo.hookFallbackFunctions[2] = HookFallbackFunction({
             functionSelector: this.getSupplyClaimedByWallet.selector,
-            callType: CallType.STATICCALL
+            callType: CallType.STATIC_CALL
         });
         hookInfo.hookFallbackFunctions[3] =
-            HookFallbackFunction({functionSelector: this.getFeeConfig.selector, callType: CallType.STATICCALL});
+            HookFallbackFunction({functionSelector: this.getFeeConfig.selector, callType: CallType.STATIC_CALL});
         hookInfo.hookFallbackFunctions[4] =
-            HookFallbackFunction({functionSelector: this.getDefaultFeeConfig.selector, callType: CallType.STATICCALL});
+            HookFallbackFunction({functionSelector: this.getDefaultFeeConfig.selector, callType: CallType.STATIC_CALL});
         hookInfo.hookFallbackFunctions[5] =
-            HookFallbackFunction({functionSelector: this.getClaimCondition.selector, callType: CallType.STATICCALL});
+            HookFallbackFunction({functionSelector: this.getClaimCondition.selector, callType: CallType.STATIC_CALL});
         hookInfo.hookFallbackFunctions[6] =
             HookFallbackFunction({functionSelector: this.setClaimCondition.selector, callType: CallType.CALL});
         hookInfo.hookFallbackFunctions[7] =

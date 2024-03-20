@@ -83,17 +83,17 @@ contract AllowlistMintHookERC721 is IFeeConfig, ERC721Hook, Multicallable {
         hookInfo.hookFallbackFunctions[0] =
             HookFallbackFunction({functionSelector: this.setFeeConfigForToken.selector, callType: CallType.CALL});
         hookInfo.hookFallbackFunctions[1] =
-            HookFallbackFunction({functionSelector: this.getDefaultFeeConfig.selector, callType: CallType.STATICCALL});
+            HookFallbackFunction({functionSelector: this.getDefaultFeeConfig.selector, callType: CallType.STATIC_CALL});
         hookInfo.hookFallbackFunctions[2] =
-            HookFallbackFunction({functionSelector: this.getClaimCondition.selector, callType: CallType.STATICCALL});
+            HookFallbackFunction({functionSelector: this.getClaimCondition.selector, callType: CallType.STATIC_CALL});
         hookInfo.hookFallbackFunctions[3] =
             HookFallbackFunction({functionSelector: this.setClaimCondition.selector, callType: CallType.CALL});
         hookInfo.hookFallbackFunctions[4] =
             HookFallbackFunction({functionSelector: this.setNextIdToMint.selector, callType: CallType.CALL});
         hookInfo.hookFallbackFunctions[5] =
-            HookFallbackFunction({functionSelector: this.getNextTokenIdToMint.selector, callType: CallType.STATICCALL});
+            HookFallbackFunction({functionSelector: this.getNextTokenIdToMint.selector, callType: CallType.STATIC_CALL});
         hookInfo.hookFallbackFunctions[6] =
-            HookFallbackFunction({functionSelector: this.getFeeConfigForToken.selector, callType: CallType.STATICCALL});
+            HookFallbackFunction({functionSelector: this.getFeeConfigForToken.selector, callType: CallType.STATIC_CALL});
         hookInfo.hookFallbackFunctions[7] =
             HookFallbackFunction({functionSelector: this.setDefaultFeeConfig.selector, callType: CallType.CALL});
     }

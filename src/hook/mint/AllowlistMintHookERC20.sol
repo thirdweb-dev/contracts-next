@@ -78,9 +78,9 @@ contract AllowlistMintHookERC20 is IFeeConfig, ERC20Hook, Multicallable {
         hookInfo.hookFlags = BEFORE_MINT_FLAG();
         hookInfo.hookFallbackFunctions = new HookFallbackFunction[](4);
         hookInfo.hookFallbackFunctions[0] =
-            HookFallbackFunction({functionSelector: this.getFeeConfig.selector, callType: CallType.STATICCALL});
+            HookFallbackFunction({functionSelector: this.getFeeConfig.selector, callType: CallType.STATIC_CALL});
         hookInfo.hookFallbackFunctions[1] =
-            HookFallbackFunction({functionSelector: this.getClaimCondition.selector, callType: CallType.STATICCALL});
+            HookFallbackFunction({functionSelector: this.getClaimCondition.selector, callType: CallType.STATIC_CALL});
         hookInfo.hookFallbackFunctions[2] =
             HookFallbackFunction({functionSelector: this.setClaimCondition.selector, callType: CallType.CALL});
         hookInfo.hookFallbackFunctions[3] =
