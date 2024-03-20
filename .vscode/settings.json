@@ -1,0 +1,21 @@
+{
+  "solidity.remappings": [
+    "ds-test/=lib/forge-std/lib/ds-test/src/",
+    "forge-std/=lib/forge-std/src/",
+    "@murky/=lib/murky/src/",
+    "@solady/=lib/solady/src/",
+    "@erc721a/=lib/erc721a/contracts/",
+    "@thirdweb-dev/dynamic-contracts/=lib/dynamic-contracts/src/",
+    "@account-abstraction/=lib/account-abstraction/contracts",
+    "@openzeppelin/=lib/openzeppelin-contracts/",
+    "@uniswap/v3-periphery/=lib/v3-periphery",
+    "@uniswap/v3-core/=lib/v3-core",
+    "dynamic-contracts/=lib/dynamic-contracts/src/",
+    "erc721a/=lib/erc721a/contracts/",
+    "murky/=lib/murky/",
+    "openzeppelin-contracts/=lib/murky/lib/openzeppelin-contracts/",
+    "solady/=lib/solady/src/",
+    "sstore2/=lib/dynamic-contracts/lib/sstore2/contracts/"
+  ],
+  "solidity.compileUsingRemoteVersion": "v0.8.24+commit.e11b9ed9"
+}
