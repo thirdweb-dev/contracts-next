@@ -99,23 +99,23 @@ contract ERC20Core is ERC20, CoreContract, Ownable, Multicallable {
         supportedCallbackFunctions = new SupportedCallbackFunction[](4);
         supportedCallbackFunctions[0] = SupportedCallbackFunction({
             selector: this.mint.selector,
-            orderFlags: OrderFlag.BEFORE,
-            modeFlags: ModeFlag.REQUIRED
+            order: CallbackOrder.BEFORE,
+            mode: CallbackMode.REQUIRED
         });
         supportedCallbackFunctions[1] = SupportedCallbackFunction({
             selector: this.transfer.selector,
-            orderFlags: OrderFlag.BEFORE,
-            modeFlags: ModeFlag.OPTIONAL
+            order: CallbackOrder.BEFORE,
+            mode: CallbackMode.OPTIONAL
         });
         supportedCallbackFunctions[2] = SupportedCallbackFunction({
             selector: this.burn.selector,
-            orderFlags: OrderFlag.BEFORE,
-            modeFlags: ModeFlag.OPTIONAL
+            order: CallbackOrder.BEFORE,
+            mode: CallbackMode.OPTIONAL
         });
         supportedCallbackFunctions[3] = SupportedCallbackFunction({
             selector: this.approve.selector,
-            orderFlags: OrderFlag.BEFORE,
-            modeFlags: ModeFlag.OPTIONAL
+            order: CallbackOrder.BEFORE,
+            mode: CallbackMode.OPTIONAL
         });
     }
 
@@ -249,7 +249,6 @@ contract ERC20Core is ERC20, CoreContract, Ownable, Multicallable {
         uint256 amount,
         bytes calldata data
     ) internal virtual {
-        // TODO should revert if extension doesn't exists
         _callExtensionCallback(
             BeforeMintCallbackERC20.beforeMintERC20.selector,
             abi.encodeCall(

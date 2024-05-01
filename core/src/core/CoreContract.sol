@@ -18,21 +18,21 @@ abstract contract CoreContract is IExtensionTypes {
     /*//////////////////////////////////////////////////////////////
                                 STRUCTS
     //////////////////////////////////////////////////////////////*/
-    enum OrderFlag {
+    enum CallbackOrder {
         BEFORE,
         ON,
         AFTER
     }
 
-    enum ModeFlag {
+    enum CallbackMode {
         OPTIONAL,
         REQUIRED
     }
 
     struct SupportedCallbackFunction {
         bytes4 selector;
-        OrderFlag orderFlags;
-        ModeFlag modeFlags;
+        CallbackOrder order;
+        CallbackMode mode;
     }
 
     struct InstalledExtension {
@@ -82,6 +82,7 @@ abstract contract CoreContract is IExtensionTypes {
     error UnauthorizedFunctionCall();
     error ExtensionFunctionAlreadyInstalled();
     error CallbackFunctionAlreadyInstalled();
+    error CallbackFunctionRequired();
     error CallbackExecutionReverted();
 
     /*//////////////////////////////////////////////////////////////
@@ -264,7 +265,7 @@ abstract contract CoreContract is IExtensionTypes {
         ExtensionConfig memory config = IExtensionContract(_extension)
             .getExtensionConfig();
 
-        // Remove extension function data.
+        // Remove extension function data
         uint256 totalFunctions = config.extensionABI.length;
         for (uint256 i = 0; i < totalFunctions; i++) {
             ExtensionFunction memory ext = config.extensionABI[i];
@@ -293,14 +294,31 @@ abstract contract CoreContract is IExtensionTypes {
         bytes4 selector,
         bytes memory encodedAbiCallData
     ) internal {
-        address extension = callbackFunctionImplementation_[selector];
+        SupportedCallbackFunction[]
+            memory functions = getSupportedCallbackFunctions();
+        uint256 len = functions.length;
 
+        SupportedCallbackFunction memory callbackFunctionData;
+
+        // TODO: optimize
+        for (uint256 i = 0; i < len; i++) {
+            if (functions[i].selector == selector) {
+                callbackFunctionData = functions[i];
+                break;
+            }
+        }
+
+        address extension = callbackFunctionImplementation_[selector];
         if (extension != address(0)) {
             (bool success, bytes memory returndata) = extension.call{
                 value: msg.value
             }(encodedAbiCallData);
             if (!success) {
                 _revert(returndata, CallbackExecutionReverted.selector);
+            }
+        } else {
+            if (callbackFunctionData.mode == CallbackMode.REQUIRED) {
+                revert CallbackFunctionRequired();
             }
         }
     }

@@ -123,38 +123,38 @@ contract ERC721Core is ERC721AQueryable, CoreContract, Ownable, Multicallable {
         supportedCallbackFunctions = new SupportedCallbackFunction[](7);
         supportedCallbackFunctions[0] = SupportedCallbackFunction({
             selector: this.mint.selector,
-            orderFlags: OrderFlag.BEFORE,
-            modeFlags: ModeFlag.REQUIRED
+            order: CallbackOrder.BEFORE,
+            mode: CallbackMode.REQUIRED
         });
         supportedCallbackFunctions[1] = SupportedCallbackFunction({
             selector: this.transferFrom.selector,
-            orderFlags: OrderFlag.BEFORE,
-            modeFlags: ModeFlag.OPTIONAL
+            order: CallbackOrder.BEFORE,
+            mode: CallbackMode.OPTIONAL
         });
         supportedCallbackFunctions[2] = SupportedCallbackFunction({
             selector: this.burn.selector,
-            orderFlags: OrderFlag.BEFORE,
-            modeFlags: ModeFlag.OPTIONAL
+            order: CallbackOrder.BEFORE,
+            mode: CallbackMode.OPTIONAL
         });
         supportedCallbackFunctions[3] = SupportedCallbackFunction({
             selector: this.approve.selector,
-            orderFlags: OrderFlag.BEFORE,
-            modeFlags: ModeFlag.OPTIONAL
+            order: CallbackOrder.BEFORE,
+            mode: CallbackMode.OPTIONAL
         });
         supportedCallbackFunctions[4] = SupportedCallbackFunction({
             selector: this.setApprovalForAll.selector,
-            orderFlags: OrderFlag.BEFORE,
-            modeFlags: ModeFlag.OPTIONAL
+            order: CallbackOrder.BEFORE,
+            mode: CallbackMode.OPTIONAL
         });
         supportedCallbackFunctions[5] = SupportedCallbackFunction({
             selector: this.tokenURI.selector,
-            orderFlags: OrderFlag.ON,
-            modeFlags: ModeFlag.REQUIRED
+            order: CallbackOrder.ON,
+            mode: CallbackMode.REQUIRED
         });
         supportedCallbackFunctions[6] = SupportedCallbackFunction({
             selector: this.royaltyInfo.selector,
-            orderFlags: OrderFlag.ON,
-            modeFlags: ModeFlag.OPTIONAL
+            order: CallbackOrder.ON,
+            mode: CallbackMode.OPTIONAL
         });
     }
 
@@ -280,7 +280,6 @@ contract ERC721Core is ERC721AQueryable, CoreContract, Ownable, Multicallable {
         uint256 quantity,
         bytes calldata data
     ) internal virtual {
-        // TODO should revert if extension doesn't exists
         _callExtensionCallback(
             BeforeMintCallbackERC721.beforeMintERC721.selector,
             abi.encodeCall(

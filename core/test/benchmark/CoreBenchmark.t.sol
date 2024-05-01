@@ -13,6 +13,7 @@ contract MockBase {
     function getFunctionSignature()
         internal
         pure
+        virtual
         returns (bytes4[] memory functions)
     {
         functions = new bytes4[](NUMBER_OF_CALLBACK);
@@ -22,7 +23,7 @@ contract MockBase {
     }
 }
 
-contract MockCore is MockBase, CoreContract {
+contract MockCoreMinimal is MockBase, CoreContract {
     function getSupportedCallbackFunctions()
         public
         pure
@@ -41,10 +42,61 @@ contract MockCore is MockBase, CoreContract {
         for (uint256 i = 0; i < NUMBER_OF_CALLBACK; i++) {
             functions[i] = SupportedCallbackFunction({
                 selector: bytes4(uint32(i)),
-                orderFlags: OrderFlag.BEFORE,
-                modeFlags: ModeFlag.OPTIONAL
+                order: CallbackOrder.BEFORE,
+                mode: CallbackMode.OPTIONAL
             });
         }
+    }
+
+    function _isAuthorizedToInstallExtensions(
+        address /* _target */
+    ) internal pure override returns (bool) {
+        return true;
+    }
+
+    function _isAuthorizedToCallExtensionFunctions(
+        address /*_target*/
+    ) internal pure override returns (bool) {
+        return true;
+    }
+}
+
+contract MockCore is MockBase, CoreContract {
+    function getSupportedCallbackFunctions()
+        public
+        pure
+        override
+        returns (SupportedCallbackFunction[] memory supportedCallbackFunctions)
+    {
+        supportedCallbackFunctions = getCallbackFunctions();
+    }
+
+    function getCallbackFunctions()
+        internal
+        pure
+        returns (SupportedCallbackFunction[] memory functions)
+    {
+        functions = new SupportedCallbackFunction[](NUMBER_OF_CALLBACK + 1);
+        for (uint256 i = 0; i < NUMBER_OF_CALLBACK; i++) {
+            functions[i] = SupportedCallbackFunction({
+                selector: bytes4(uint32(i)),
+                order: CallbackOrder.BEFORE,
+                mode: CallbackMode.OPTIONAL
+            });
+        }
+
+        functions[NUMBER_OF_CALLBACK] = SupportedCallbackFunction({
+            selector: this.callbackFunctionOne.selector,
+            order: CallbackOrder.BEFORE,
+            mode: CallbackMode.REQUIRED
+        });
+    }
+
+    function callbackFunctionOne() external {
+        _callExtensionCallback(
+            msg.sig,
+            abi.encodeCall(this.callbackFunctionOne, ())
+        );
     }
 
     function _isAuthorizedToInstallExtensions(
@@ -76,9 +128,24 @@ contract MockExtension is MockBase, IExtensionContract {
 }
 
 contract MockExtensionWithFunctions is MockBase, IExtensionContract {
+    event CallbackFunctionOne();
+
     function onInstall(bytes memory data) external {}
 
     function onUninstall(bytes memory data) external {}
+
+    function getFunctionSignature()
+        internal
+        pure
+        override
+        returns (bytes4[] memory functions)
+    {
+        functions = new bytes4[](NUMBER_OF_CALLBACK + 1);
+        for (uint256 i = 0; i < NUMBER_OF_CALLBACK; i++) {
+            functions[i] = bytes4(uint32(i));
+        }
+        functions[NUMBER_OF_CALLBACK] = this.callbackFunctionOne.selector;
+    }
 
     function getExtensionConfig()
         external
@@ -122,6 +189,10 @@ contract MockExtensionWithFunctions is MockBase, IExtensionContract {
         config.extensionABI = functions;
     }
 
+    function callbackFunctionOne() external {
+        emit CallbackFunctionOne();
+    }
+
     function notPermissioned_call() external {}
 
     function notPermissioned_delegatecall() external {}
@@ -144,14 +215,17 @@ contract CoreBenchmark is Test {
     MockCore public core;
     MockExtension public extension;
     MockCore public coreWithExtensions;
+    MockCore public coreWithExtensionsNoCallback;
     MockExtensionWithFunctions public extensionWithFunctions;
 
     function setUp() public {
         core = new MockCore();
         coreWithExtensions = new MockCore();
+        coreWithExtensionsNoCallback = new MockCore();
         extension = new MockExtension();
         extensionWithFunctions = new MockExtensionWithFunctions();
 
+        coreWithExtensionsNoCallback.installExtension(address(extension), "");
         coreWithExtensions.installExtension(
             address(extensionWithFunctions),
             ""
@@ -159,7 +233,7 @@ contract CoreBenchmark is Test {
     }
 
     function test_deployCore() public {
-        new MockCore();
+        new MockCoreMinimal();
     }
 
     function test_deployExtension() public {
@@ -210,5 +284,19 @@ contract CoreBenchmark is Test {
             )
         );
         vm.assertTrue(success);
+    }
+
+    function test_core_callCallbackFunction_required() public {
+        (bool success, ) = address(coreWithExtensions).call(
+            abi.encodeCall(coreWithExtensions.callbackFunctionOne, ())
+        );
+        vm.assertTrue(success);
+    }
+
+    function test_core_callFunction_callback_callbackFunctionRequired() public {
+        vm.expectRevert(CoreContract.CallbackFunctionRequired.selector);
+        address(coreWithExtensionsNoCallback).call(
+            abi.encodeCall(coreWithExtensionsNoCallback.callbackFunctionOne, ())
+        );
     }
 }
