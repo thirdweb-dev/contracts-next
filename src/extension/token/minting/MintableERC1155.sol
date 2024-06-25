@@ -207,11 +207,35 @@ contract MintableERC1155 is
 
     /// @dev Called by a Core into an Extension during the installation of the Extension.
     function onInstall(bytes calldata data) external {
-        _mintableStorage().saleConfig = SaleConfig(msg.sender);
+        address primarySaleRecipient = abi.decode(data, (address));
+        _mintableStorage().saleConfig = SaleConfig(primarySaleRecipient);
     }
 
     /// @dev Called by a Core into an Extension during the uninstallation of the Extension.
     function onUninstall(bytes calldata data) external {}
+
+    /*//////////////////////////////////////////////////////////////
+                    Encode install / uninstall data
+    //////////////////////////////////////////////////////////////*/
+
+    /// @dev Returns bytes encoded install params, to be sent to `onInstall` function
+    function encodeBytesOnInstall(address primarySaleRecipient) external pure returns (bytes memory) {
+        return abi.encode(primarySaleRecipient);
+    }
+
+    /// @dev Returns bytes encoded uninstall params, to be sent to `onUninstall` function
+    function encodeBytesOnUninstall() external pure returns (bytes memory) {
+        return "";
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                        Encode mint params
+    //////////////////////////////////////////////////////////////*/
+
+    /// @dev Returns bytes encoded mint params, to be used in `beforeMint` fallback function
+    function encodeBytesBeforeMintERC1155(MintParamsERC1155 memory params) external pure returns (bytes memory) {
+        return abi.encode(params);
+    }
 
     /*//////////////////////////////////////////////////////////////
                             FALLBACK FUNCTIONS
